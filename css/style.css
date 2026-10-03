@@ -155,29 +155,6 @@ main {
     transform: scale(1.2) rotate(-6deg);
 }
 
-/* Burnt-paper edge over the map. pointer-events: none keeps the map draggable. */
-.chart-vignette {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 500;
-    background:
-        radial-gradient(ellipse at center, transparent 62%, rgba(58, 42, 26, 0.35) 100%),
-        linear-gradient(to bottom, rgba(58, 42, 26, 0.25), transparent 6%, transparent 94%, rgba(58, 42, 26, 0.25)),
-        linear-gradient(to right, rgba(58, 42, 26, 0.25), transparent 4%, transparent 96%, rgba(58, 42, 26, 0.25));
-}
-
-.compass-rose {
-    position: absolute;
-    left: 16px;
-    bottom: 28px;
-    width: 110px;
-    height: 110px;
-    pointer-events: none;
-    z-index: 600;
-    filter: drop-shadow(4px 4px 0 rgba(18, 29, 41, 0.45));
-}
-
 .leaflet-control-zoom a {
     font-family: var(--display);
     font-size: 22px;
@@ -434,10 +411,4 @@ main {
         height: 110px;
     }
 
-    .compass-rose {
-        width: 70px;
-        height: 70px;
-        left: 10px;
-        bottom: 24px;
-    }
 }

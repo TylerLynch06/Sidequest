@@ -46,18 +46,6 @@
         <!-- Leaflet will insert the map into this element -->
         <div id="map"></div>
 
-        <!-- Chart dressing: burnt-paper edges and a compass rose. Purely visual, clicks pass through. -->
-        <div class="chart-vignette" aria-hidden="true"></div>
-        <svg class="compass-rose" viewBox="0 0 120 120" aria-hidden="true">
-            <circle cx="60" cy="60" r="54" fill="rgba(239,227,195,0.85)" stroke="#3A2A1A" stroke-width="3"/>
-            <circle cx="60" cy="60" r="44" fill="none" stroke="#3A2A1A" stroke-width="1.5" stroke-dasharray="3 4"/>
-            <path d="M60 10 L68 52 L60 60 L52 52 Z" fill="#C8372D" stroke="#3A2A1A" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M60 110 L68 68 L60 60 L52 68 Z" fill="#EFE3C3" stroke="#3A2A1A" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M10 60 L52 52 L60 60 L52 68 Z" fill="#EFE3C3" stroke="#3A2A1A" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M110 60 L68 52 L60 60 L68 68 Z" fill="#EFE3C3" stroke="#3A2A1A" stroke-width="2" stroke-linejoin="round"/>
-            <text x="60" y="9" text-anchor="middle" font-family="Bangers, Impact, sans-serif" font-size="13" fill="#3A2A1A">N</text>
-            <circle cx="60" cy="60" r="4" fill="#E2A72E" stroke="#3A2A1A" stroke-width="2"/>
-        </svg>
 
         <!-- Side quest plan (filled in by js/sidequest.js) -->
         <aside id="quest-panel"></aside>
