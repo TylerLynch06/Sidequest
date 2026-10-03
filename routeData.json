@@ -1,0 +1,42 @@
+[
+  {
+    "name": "St Andrews Links",
+    "lon": -2.792,
+    "lat": 56.342
+  },
+  {
+    "name": "Carnoustie Golf Links",
+    "lon": -2.883,
+    "lat": 56.483
+  },
+  {
+    "name": "Broughty Castle",
+    "lon": -2.948,
+    "lat": 56.498
+  },
+  {
+    "name": "Tay Rail Bridge",
+    "lon": -2.965,
+    "lat": 56.465
+  },
+  {
+    "name": "Dundee Art Gallery and Museum",
+    "lon": -2.994,
+    "lat": 56.462
+  },
+  {
+    "name": "V&A Dundee",
+    "lon": -2.996,
+    "lat": 56.461
+  },
+  {
+    "name": "Dundee Waterfront",
+    "lon": -2.992,
+    "lat": 56.458
+  },
+  {
+    "name": "Tay Bridge",
+    "lon": -2.968,
+    "lat": 56.468
+  }
+]
