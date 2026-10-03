@@ -11,30 +11,92 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap contributors"
 }).addTo(map);
 
+// Everything belonging to the current route lives in this group so a new
+// search can wipe it in one call.
+const routeLayer = L.layerGroup().addTo(map);
+
 
 // -----------------------
-// Geocoding
+// Route API (server.py)
 // -----------------------
 
-async function geocode(placeName) {
+// `API` and `escapeHtml` are declared in landmarks.js, which loads after this
+// file. That is fine: they are only used when the button is clicked, by which
+// time both scripts have run.
 
+async function getRoute(start, end) {
   const url =
-    "https://nominatim.openstreetmap.org/search" +
-    "?format=json" +
-    "&limit=1" +
-    "&q=" + encodeURIComponent(placeName);
+    `${API}/api/route?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
 
-  const response = await fetch(url);
-  const results = await response.json();
-
-  if (results.length === 0) {
-    throw new Error("Location not found");
+  const res = await fetch(url);
+  if (!res.ok) {
+    // server.py returns {"detail": "..."} for 404/502 — surface it to the user
+    let detail = `API error ${res.status}`;
+    try { detail = (await res.json()).detail || detail; } catch (_) {}
+    throw new Error(detail);
   }
+  return res.json(); // { origin, destination, stops, geometry, bbox, departure, ... }
+}
 
-  return [
-    parseFloat(results[0].lat),
-    parseFloat(results[0].lon)
-  ];
+// Ember times are UTC ("2026-10-03T12:12:00+00:00"); show them in local time.
+function fmtTime(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function fmtPrice(pence) {
+  return pence == null ? "" : `£${(pence / 100).toFixed(2)}`;
+}
+
+
+// -----------------------
+// Drawing
+// -----------------------
+
+function drawRoute(route) {
+  routeLayer.clearLayers();
+
+  // GeoJSON is [lon, lat]; Leaflet wants [lat, lon]
+  const linePoints = route.geometry.coordinates.map(([lon, lat]) => [lat, lon]);
+
+  const routeLine = L.polyline(linePoints, {
+    color: "#4F917A",
+    weight: 5
+  }).addTo(routeLayer);
+
+  // One marker per stop. Ends get the default pin; intermediate stops get a
+  // small circle so landmarks (plain pins, from landmarks.js) stay distinct.
+  route.stops.forEach((stop) => {
+    if (stop.lat == null || stop.lon == null) return;
+
+    const isEnd = stop.role === "origin" || stop.role === "destination";
+    const marker = isEnd
+      ? L.marker([stop.lat, stop.lon])
+      : L.circleMarker([stop.lat, stop.lon], {
+          radius: 6,
+          color: "#252A31",
+          weight: 2,
+          fillColor: "#ffffff",
+          fillOpacity: 1
+        });
+
+    const lines = [
+      `<strong>${escapeHtml(stop.name)}</strong>`,
+      stop.detailed_name && stop.detailed_name !== stop.name ? escapeHtml(stop.detailed_name) : null,
+      stop.arrival ? `Bus here at ${fmtTime(stop.arrival)}` : null,
+      stop.allow_drop_off === false ? "No alighting here" : null,
+      stop.allow_boarding === false ? "No boarding here" : null
+    ].filter(Boolean);
+
+    marker.bindPopup(lines.join("<br>"));
+    marker.bindTooltip(escapeHtml(stop.name));
+    marker.addTo(routeLayer);
+  });
+
+  // Fit map around route
+  map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+
+  return routeLine;
 }
 
 
@@ -42,59 +104,45 @@ async function geocode(placeName) {
 // Route button
 // -----------------------
 
-document
-  .getElementById("route-button")
-  .addEventListener("click", async function () {
+const routeButton = document.getElementById("route-button");
 
-    const originText =
-      document.getElementById("origin").value;
+routeButton.addEventListener("click", async function () {
 
-    const destinationText =
-      document.getElementById("destination").value;
+  const originText = document.getElementById("origin").value.trim();
+  const destinationText = document.getElementById("destination").value.trim();
 
-    try {
+  if (!originText || !destinationText) {
+    alert("Enter both an origin and a destination.");
+    return;
+  }
 
-      // Find coordinates
-      const origin = await geocode(originText);
-      const destination = await geocode(destinationText);
+  routeButton.disabled = true;
+  routeButton.textContent = "Finding route…";
 
-      // Add markers
-      L.marker(origin)
-        .addTo(map)
-        .bindPopup("Origin");
+  try {
 
-      L.marker(destination)
-        .addTo(map)
-        .bindPopup("Destination");
+    const route = await getRoute(originText, destinationText);
+    drawRoute(route);
 
-      // TODO: ADD JOE's CODE
-      const routePoints = [
-        [56.340, -2.800],
-        [56.345, -2.820],
-        [56.350, -2.835],
-        [56.355, -2.850],
-        [56.360, -2.870],
-        [56.370, -2.890]
-      ];
+    console.log(
+      `Route ${route.route_number || ""} ${route.origin.name} → ${route.destination.name}: ` +
+      `${fmtTime(route.departure)}–${fmtTime(route.arrival)}, ${fmtPrice(route.price_adult_pence)}, ` +
+      `${route.stops.length} stops (trip ${route.trip_uid})`
+    );
 
-      const routeLine = L.polyline(routePoints, {
-        color: "#4F917A",
-        weight: 5
-      }).addTo(map);
+    // Get landmarks near the route and plot them (see landmarks.js)
+    showLandmarks(originText, destinationText);
 
-      // Fit map around route
-      map.fitBounds(routeLine.getBounds(), {
-        padding: [50, 50]
-      });
+  } catch (error) {
 
-      // Get landmarks near the route and plot them (see landmarks.js)
-      showLandmarks(originText, destinationText);
+    alert(error.message || "Could not find a route between those places.");
+    console.error(error);
 
-    } catch (error) {
+  } finally {
 
-      alert("Could not find one of those locations.");
+    routeButton.disabled = false;
+    routeButton.textContent = "Find sidequests";
 
-      console.error(error);
-    }
+  }
 
-  });
+});
