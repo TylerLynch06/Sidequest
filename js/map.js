@@ -4,7 +4,14 @@
 
 const startPosition = [56.34, -2.80];
 
-const map = L.map("map").setView(startPosition, 10);
+// The chart covers the UK and Ireland only: you can't drag or zoom out beyond it
+const UK_BOUNDS = L.latLngBounds([49.6, -11.0], [61.2, 2.5]);
+
+const map = L.map("map", {
+  maxBounds: UK_BOUNDS,
+  maxBoundsViscosity: 1.0,   // hard edge, no rubber-banding past it
+  minZoom: 5
+}).setView(startPosition, 10);
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -14,6 +21,22 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // Everything belonging to the current route lives in this group so a new
 // search can wipe it in one call.
 const routeLayer = L.layerGroup().addTo(map);
+
+// Pennant flags for the start and end of the voyage
+function flagIcon(colour, label) {
+  return L.divIcon({
+    className: "flag-marker",
+    iconSize: [34, 40],
+    iconAnchor: [4, 40],
+    popupAnchor: [10, -36],
+    html: `<svg viewBox="0 0 34 40" width="34" height="40" aria-label="${label}">
+      <line x1="4" y1="2" x2="4" y2="40" stroke="#3A2A1A" stroke-width="3" stroke-linecap="round"/>
+      <path d="M6 3 L32 10 L6 17 Z" fill="${colour}" stroke="#3A2A1A" stroke-width="2" stroke-linejoin="round"/>
+    </svg>`
+  });
+}
+const originFlag = flagIcon("#3FA07A", "Start");
+const destinationFlag = flagIcon("#E2A72E", "Destination");
 
 // The route currently on screen, used by sidequest.js
 let currentRoute = null;
@@ -62,9 +85,12 @@ function drawRoute(route) {
   // GeoJSON is [lon, lat]; Leaflet wants [lat, lon]
   const linePoints = route.geometry.coordinates.map(([lon, lat]) => [lat, lon]);
 
+  // Ink underlay then jade on top: reads as a drawn trail rather than a GPS track
+  L.polyline(linePoints, { color: "#3A2A1A", weight: 9, opacity: 0.9, lineJoin: "round" }).addTo(routeLayer);
   const routeLine = L.polyline(linePoints, {
-    color: "#4F917A",
-    weight: 5
+    color: "#3FA07A",
+    weight: 5,
+    lineJoin: "round"
   }).addTo(routeLayer);
 
   // One marker per stop. Ends get the default pin; intermediate stops get a
@@ -74,7 +100,7 @@ function drawRoute(route) {
 
     const isEnd = stop.role === "origin" || stop.role === "destination";
     const marker = isEnd
-      ? L.marker([stop.lat, stop.lon])
+      ? L.marker([stop.lat, stop.lon], { icon: stop.role === "origin" ? originFlag : destinationFlag })
       : L.circleMarker([stop.lat, stop.lon], {
           radius: 6,
           color: "#252A31",

@@ -79,6 +79,18 @@ async function getPoiImage(poiName) {
 // Holds all landmark markers so they can be cleared for the next route
 const landmarkLayer = L.layerGroup().addTo(map);
 
+// X marks the spot: a hand-drawn red cross instead of the default pin
+const crossIcon = L.divIcon({
+  className: "x-marker",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -14],
+  html: `<svg viewBox="0 0 30 30" width="30" height="30">
+    <path d="M6 5 L24 25 M24 5 L6 25" stroke="#3A2A1A" stroke-width="9" stroke-linecap="round"/>
+    <path d="M6 5 L24 25 M24 5 L6 25" stroke="#C8372D" stroke-width="5" stroke-linecap="round"/>
+  </svg>`
+});
+
 // The text comes from a language model, so escape it before putting it in HTML
 function escapeHtml(text) {
   const div = document.createElement("div");
@@ -136,7 +148,7 @@ function addLandmark(poi) {
   if (typeof poi.lat !== "number" || typeof poi.lon !== "number") return;
 
   // API returns lon/lat, Leaflet wants [lat, lon]
-  const marker = L.marker([poi.lat, poi.lon]).addTo(landmarkLayer);
+  const marker = L.marker([poi.lat, poi.lon], { icon: crossIcon }).addTo(landmarkLayer);
 
   // Hover: name only
   marker.bindTooltip(escapeHtml(poi.name));
