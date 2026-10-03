@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-03T10:45:46Z",
+  "query": {
+    "origin_text": "Dundee",
+    "destination_text": "Edinburgh",
+    "travel_date": "2026-10-04",
+    "journey_index": 0
+  },
+  "origin": {
+    "id": 13,
+    "type": "STOP_AREA",
+    "name": "Dundee (City Centre)",
+    "region": "Dundee",
+    "detailed_name": "City Centre"
+  },
+  "destination": {
+    "id": 42,
+    "type": "STOP_AREA",
+    "name": "Edinburgh (City Centre)",
+    "region": "Edinburgh",
+    "detailed_name": "City Centre"
+  },
+  "journeys": [
+    {
+      "index": 0,
+      "trip_uid": "TRIP-1",
+      "route_number": "E3",
+      "departure": "2026-10-04T09:00:00Z",
+      "arrival": "2026-10-04T10:45:00Z",
+      "origin_stop": {
+        "id": 1301,
+        "area_id": 13,
+        "name": "Dundee Slessor Gardens",
+        "region": "Dundee",
+        "lat": 56.4603,
+        "lon": -2.9676
+      },
+      "destination_stop": {
+        "id": 4201,
+        "area_id": 42,
+        "name": "Edinburgh Elder St",
+        "region": "Edinburgh",
+        "lat": 55.9557,
+        "lon": -3.1903
+      },
+      "price_adult_pence": 1250,
+      "seats_available": 20,
+      "legs": 1
+    }
+  ],
+  "selected_journey": {
+    "trip_uid": "TRIP-1",
+    "route_number": "E3",
+    "departure": "2026-10-04T09:00:00Z",
+    "arrival": "2026-10-04T10:45:00Z",
+    "price_adult_pence": 1250,
+    "stops": [
+      {
+        "sequence": 0,
+        "role": "origin",
+        "location_id": 1301,
+        "area_id": 13,
+        "name": "Dundee Slessor Gardens",
+        "region": "Dundee",
+        "detailed_name": null,
+        "lat": 56.4603,
+        "lon": -2.9676,
+        "arrival": "2026-10-04T09:00:00Z",
+        "departure": "2026-10-04T09:00:00Z",
+        "allow_drop_off": true,
+        "allow_boarding": true
+      },
+      {
+        "sequence": 1,
+        "role": "intermediate",
+        "location_id": 1601,
+        "area_id": 160,
+        "name": "Perth Broxden",
+        "region": "Perth",
+        "detailed_name": null,
+        "lat": 56.3832,
+        "lon": -3.472,
+        "arrival": "2026-10-04T09:35:00Z",
+        "departure": "2026-10-04T09:35:00Z",
+        "allow_drop_off": true,
+        "allow_boarding": true
+      },
+      {
+        "sequence": 2,
+        "role": "intermediate",
+        "location_id": 1701,
+        "area_id": 17,
+        "name": "Kinross P&R",
+        "region": "Kinross",
+        "detailed_name": null,
+        "lat": 56.2069,
+        "lon": -3.4256,
+        "arrival": "2026-10-04T09:55:00Z",
+        "departure": "2026-10-04T09:55:00Z",
+        "allow_drop_off": true,
+        "allow_boarding": true
+      },
+      {
+        "sequence": 3,
+        "role": "destination",
+        "location_id": 4201,
+        "area_id": 42,
+        "name": "Edinburgh Elder St",
+        "region": "Edinburgh",
+        "detailed_name": null,
+        "lat": 55.9557,
+        "lon": -3.1903,
+        "arrival": "2026-10-04T10:45:00Z",
+        "departure": "2026-10-04T10:45:00Z",
+        "allow_drop_off": true,
+        "allow_boarding": true
+      }
+    ],
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [
+          -2.9676,
+          56.4603
+        ],
+        [
+          -3.2098,
+          56.42175
+        ],
+        [
+          -3.472,
+          56.3832
+        ],
+        [
+          -3.4388,
+          56.29505
+        ],
+        [
+          -3.4256,
+          56.2069
+        ],
+        [
+          -3.1903,
+          55.9557
+        ]
+      ]
+    },
+    "geometry_source": "ember_geography",
+    "segments": [
+      {
+        "from_stop_id": 1301,
+        "to_stop_id": 1601,
+        "from_name": "Dundee Slessor Gardens",
+        "to_name": "Perth Broxden",
+        "source": "ember_geography",
+        "coordinates": [
+          [
+            -2.9676,
+            56.4603
+          ],
+          [
+            -3.2098,
+            56.42175
+          ],
+          [
+            -3.472,
+            56.3832
+          ]
+        ]
+      },
+      {
+        "from_stop_id": 1601,
+        "to_stop_id": 1701,
+        "from_name": "Perth Broxden",
+        "to_name": "Kinross P&R",
+        "source": "ember_geography",
+        "coordinates": [
+          [
+            -3.472,
+            56.3832
+          ],
+          [
+            -3.4388,
+            56.29505
+          ],
+          [
+            -3.4256,
+            56.2069
+          ]
+        ]
+      },
+      {
+        "from_stop_id": 1701,
+        "to_stop_id": 4201,
+        "from_name": "Kinross P&R",
+        "to_name": "Edinburgh Elder St",
+        "source": "straight_line",
+        "coordinates": [
+          [
+            -3.4256,
+            56.2069
+          ],
+          [
+            -3.1903,
+            55.9557
+          ]
+        ]
+      }
+    ],
+    "bbox": [
+      -3.472,
+      55.9557,
+      -2.9676,
+      56.4603
+    ]
+  }
+}
