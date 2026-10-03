@@ -67,14 +67,20 @@ document
                 .addTo(map)
                 .bindPopup("Destination");
 
-            // Draw line
-            const routeLine = L.polyline(
-                [origin, destination],
-                {
-                    color: "#4F917A",
-                    weight: 5
-                }
-            ).addTo(map);
+            // TODO: ADD JOE's CODE
+            const routePoints = [
+                [56.340, -2.800],
+                [56.345, -2.820],
+                [56.350, -2.835],
+                [56.355, -2.850],
+                [56.360, -2.870],
+                [56.370, -2.890]
+            ];
+
+            const routeLine = L.polyline(routePoints, {
+                color: "#4F917A",
+                weight: 5
+            }).addTo(map);
 
             // Fit map around route
             map.fitBounds(routeLine.getBounds(), {
