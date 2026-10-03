@@ -112,7 +112,7 @@ function buildPopup(name, summary, image, popup, poi) {
 
   if (poi) {
     const btn = document.createElement("button");
-    btn.textContent = "Take this side quest";
+    btn.textContent = "Accept this quest";
     btn.className = "quest-button";
     btn.addEventListener("click", () => selectSideQuest(poi));
     box.appendChild(btn);

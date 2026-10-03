@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sidequest</title>
+    <title>Sidequest — chart new lands between stops</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -16,6 +20,7 @@
 
     <header>
         <h1>Sidequest</h1>
+        <p class="tagline">Ride the bus. Hop off. Chart new lands.</p>
     </header>
 
     <main>
@@ -24,13 +29,15 @@
             <input
                 type="text"
                 id="origin"
-                placeholder="Enter origin"
+                placeholder="Where does the journey begin?"
+                autocomplete="off"
             >
 
             <input
                 type="text"
                 id="destination"
-                placeholder="Enter destination"
+                placeholder="Where are you headed?"
+                autocomplete="off"
             >
 
             <button id="route-button">Find sidequests</button>

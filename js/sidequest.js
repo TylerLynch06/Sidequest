@@ -114,29 +114,42 @@ function el(tag, text, cls) {
   return node;
 }
 
-function renderPanel(poi, hopOff, walkThere, rejoin, walkBack, buses) {
+function renderPanel(poi, hopOff, walkThere, rejoin, walkBack, buses, image) {
   panel.replaceChildren();
   panel.classList.add("open");
 
   const close = el("button", "×", "quest-close");
+  close.setAttribute("aria-label", "Close quest");
   close.addEventListener("click", clearSideQuest);
   panel.appendChild(close);
 
+  // Banner: the landmark's picture stays on screen for the whole quest
+  if (image && image.url) {
+    const banner = el("div", null, "quest-banner");
+    const img = document.createElement("img");
+    img.src = image.url;
+    img.alt = poi.name;
+    img.addEventListener("error", () => banner.remove());
+    banner.appendChild(img);
+    panel.appendChild(banner);
+  }
+
+  panel.appendChild(el("div", "Quest accepted", "quest-stamp"));
   panel.appendChild(el("h2", poi.name));
 
   const steps = el("ol", null, "quest-steps");
-  steps.appendChild(el("li", `Get off at ${hopOff.stop.name} (bus arrives ${fmtTime(hopOff.stop.arrival)})`));
+  steps.appendChild(el("li", `Hop off at ${hopOff.stop.name} — the bus lands there at ${fmtTime(hopOff.stop.arrival)}`));
   steps.appendChild(el("li", `Walk ${walkThere.km.toFixed(1)} km, about ${walkThere.minutes} min` +
     (walkThere.real ? "" : " (estimate)")));
-  steps.appendChild(el("li", `Spend around ${VISIT_MINUTES} min at ${poi.name}`));
+  steps.appendChild(el("li", `Explore ${poi.name} for about ${VISIT_MINUTES} min`));
   steps.appendChild(el("li", rejoin.index === hopOff.index
     ? `Walk back to ${rejoin.stop.name} (${walkBack.minutes} min)`
     : `Walk on to ${rejoin.stop.name} (${walkBack.km.toFixed(1)} km, ${walkBack.minutes} min) — no boarding at ${hopOff.stop.name}`));
   panel.appendChild(steps);
 
-  panel.appendChild(el("h3", "Next buses onward"));
+  panel.appendChild(el("h3", "Catch the next bus"));
   if (!buses || buses.length === 0) {
-    panel.appendChild(el("p", "No later buses found today from this stop."));
+    panel.appendChild(el("p", "No later buses today from this stop. Try a shorter visit or an earlier landmark."));
     return;
   }
   const list = el("ul", null, "quest-buses");
@@ -175,21 +188,27 @@ async function selectSideQuest(poi) {
 
   if (rejoin.index !== hopOff.index) {
     L.circleMarker([rejoin.stop.lat, rejoin.stop.lon], {
-      radius: 10, color: "#2a6f97", weight: 3, fillColor: "#2a6f97", fillOpacity: 0.35
+      radius: 10, color: "#E2A72E", weight: 3, fillColor: "#E2A72E", fillOpacity: 0.4
     }).bindTooltip(`Rejoin here: ${escapeHtml(rejoin.stop.name)}`, { permanent: true, direction: "top" })
       .addTo(questLayer);
   }
 
-  panel.replaceChildren(el("p", "Working out the walk…"));
+  panel.replaceChildren(el("p", "Charting the path…", "quest-loading"));
   panel.classList.add("open");
 
-  const [walkThere, walkBack] = await Promise.all([
+  // Image: /api/pois may already include one; otherwise reuse the popup's Wikipedia lookup
+  const imagePromise = poi.image
+    ? Promise.resolve({ url: poi.image })
+    : (typeof getPoiImage === "function" ? getPoiImage(poi.name).catch(() => null) : Promise.resolve(null));
+
+  const [walkThere, walkBack, image] = await Promise.all([
     walkingRoute({ lat: hopOff.stop.lat, lon: hopOff.stop.lon }, { lat: poi.lat, lon: poi.lon }),
-    walkingRoute({ lat: poi.lat, lon: poi.lon }, { lat: rejoin.stop.lat, lon: rejoin.stop.lon })
+    walkingRoute({ lat: poi.lat, lon: poi.lon }, { lat: rejoin.stop.lat, lon: rejoin.stop.lon }),
+    imagePromise
   ]);
 
-  const there = L.polyline(walkThere.points, { color: "#2a6f97", weight: 4, dashArray: "8 8" }).addTo(questLayer);
-  L.polyline(walkBack.points, { color: "#2a6f97", weight: 4, dashArray: "2 8", opacity: 0.7 }).addTo(questLayer);
+  const there = L.polyline(walkThere.points, { color: "#C8372D", weight: 5, dashArray: "10 8" }).addTo(questLayer);
+  L.polyline(walkBack.points, { color: "#C8372D", weight: 5, dashArray: "2 9", opacity: 0.75 }).addTo(questLayer);
   map.fitBounds(there.getBounds().extend([poi.lat, poi.lon]).extend([rejoin.stop.lat, rejoin.stop.lon]),
     { padding: [60, 60], maxZoom: 15 });
 
@@ -201,7 +220,7 @@ async function selectSideQuest(poi) {
     console.error("Could not load rejoin buses:", error);
   }
 
-  renderPanel(poi, hopOff, walkThere, rejoin, walkBack, buses);
+  renderPanel(poi, hopOff, walkThere, rejoin, walkBack, buses, image);
 }
 
 function clearSideQuest() {
