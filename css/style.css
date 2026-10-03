@@ -5,8 +5,8 @@ body {
 
 header {
     padding: 16px 24px;
-    background-color: #1f2937;
-    color: white;
+    background-color: #252A31;
+    color: #4F917A;
 }
 
 header h1 {
@@ -16,4 +16,35 @@ header h1 {
 #map {
     width: 100%;
     height: calc(100vh - 70px);
+}
+
+.route-form {
+    display: flex;
+    gap: 10px;
+    padding: 16px;
+    background-color: #f5f5f5;
+}
+
+.route-form input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.route-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+
+    background-color: #4F917A;
+    color: white;
+
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.route-form button:hover {
+    background-color: #3d725f;
 }

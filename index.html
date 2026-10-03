@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Route Planner</title>
+    <title>Sidequest</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -19,8 +19,26 @@
     </header>
 
     <main>
+
+        <div class="route-form">
+            <input
+                type="text"
+                id="origin"
+                placeholder="Enter origin"
+            >
+
+            <input
+                type="text"
+                id="destination"
+                placeholder="Enter destination"
+            >
+
+            <button id="route-button">Find sidequests</button>
+        </div>
+
         <!-- Leaflet will insert the map into this element -->
         <div id="map"></div>
+
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
