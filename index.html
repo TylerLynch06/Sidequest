@@ -26,19 +26,27 @@
     <main>
 
         <div class="route-form">
-            <input
-                type="text"
-                id="origin"
-                placeholder="Where does the journey begin?"
-                autocomplete="off"
-            >
+            <div class="place-field">
+                <input
+                    type="text"
+                    id="origin"
+                    placeholder="Where does the journey begin?"
+                    autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                >
+            </div>
 
-            <input
-                type="text"
-                id="destination"
-                placeholder="Where are you headed?"
-                autocomplete="off"
-            >
+            <div class="place-field">
+                <input
+                    type="text"
+                    id="destination"
+                    placeholder="Where are you headed?"
+                    autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                >
+            </div>
 
             <button id="route-button">Find sidequests</button>
         </div>
@@ -66,6 +74,7 @@
     <script src="js/map.js"></script>
     <script src="js/landmarks.js"></script>
     <script src="js/sidequest.js"></script>
+    <script src="js/places.js"></script>
 
 </body>
 </html>

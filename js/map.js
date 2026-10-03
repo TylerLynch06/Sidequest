@@ -137,13 +137,21 @@ const routeButton = document.getElementById("route-button");
 
 routeButton.addEventListener("click", async function () {
 
-  const originText = document.getElementById("origin").value.trim();
-  const destinationText = document.getElementById("destination").value.trim();
+  // Places must be chosen from the type-ahead list (see places.js)
+  const origin = selectedPlace.origin;
+  const destination = selectedPlace.destination;
 
-  if (!originText || !destinationText) {
-    alert("Enter both an origin and a destination.");
+  if (!origin || !destination) {
+    const missing = !origin ? document.getElementById("origin") : document.getElementById("destination");
+    missing.classList.add("invalid");
+    missing.focus();
     return;
   }
+
+  const originText = origin.name;               // exact Ember stop name, e.g. "Dundee (City Centre)"
+  const destinationText = destination.name;
+  const originRegion = origin.region || origin.name;        // plain town name for the landmark search
+  const destinationRegion = destination.region || destination.name;
 
   routeButton.disabled = true;
   routeButton.textContent = "Finding route…";
@@ -154,7 +162,7 @@ routeButton.addEventListener("click", async function () {
 
     // Landmarks don't depend on the route result, so request both at once.
     // showLandmarks handles its own errors and loading indicator.
-    const landmarksPromise = showLandmarks(originText, destinationText);
+    const landmarksPromise = showLandmarks(originRegion, destinationRegion);
 
     const route = await getRoute(originText, destinationText);
     currentRoute = route;

@@ -66,15 +66,61 @@ header .tagline {
     background: var(--sea);
 }
 
-.route-form input {
+.place-field {
+    position: relative;
     flex: 1;
     min-width: 0;
+}
+
+.route-form input {
+    width: 100%;
     padding: 12px 14px;
     font: 700 16px var(--body);
     color: var(--ink);
     background: var(--parchment);
     border: 3px solid var(--ink);
     border-radius: 4px;
+}
+
+.route-form input.invalid {
+    border-color: var(--red);
+    box-shadow: 0 0 0 2px rgba(200, 55, 45, 0.35);
+}
+
+/* Dropdown of Ember stops */
+.place-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background: var(--parchment);
+    border: 3px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 4px 4px 0 rgba(18, 29, 41, 0.55);
+    z-index: 1100;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.place-list li {
+    padding: 9px 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.place-list li:hover,
+.place-list li.active {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+.place-list .place-empty {
+    cursor: default;
+    color: var(--ink-soft);
+    font-weight: 400;
 }
 
 .route-form input::placeholder {
@@ -440,7 +486,7 @@ main {
         flex-wrap: wrap;
     }
 
-    .route-form input {
+    .place-field {
         flex-basis: 100%;
     }
 
