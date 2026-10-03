@@ -15,6 +15,9 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // search can wipe it in one call.
 const routeLayer = L.layerGroup().addTo(map);
 
+// The route currently on screen, used by sidequest.js
+let currentRoute = null;
+
 
 // -----------------------
 // Route API (server.py)
@@ -122,6 +125,8 @@ routeButton.addEventListener("click", async function () {
   try {
 
     const route = await getRoute(originText, destinationText);
+    currentRoute = route;
+    if (typeof clearSideQuest === "function") clearSideQuest();
     drawRoute(route);
 
     console.log(

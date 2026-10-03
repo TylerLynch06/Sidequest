@@ -88,7 +88,7 @@ function escapeHtml(text) {
 
 // Builds the popup from DOM nodes (not an HTML string), so model text and
 // image URLs are never parsed as markup.
-function buildPopup(name, summary, image, popup) {
+function buildPopup(name, summary, image, popup, poi) {
   const box = document.createElement("div");
   box.style.maxWidth = "240px";
 
@@ -109,6 +109,14 @@ function buildPopup(name, summary, image, popup) {
   const text = document.createElement("p");
   text.textContent = summary;
   box.appendChild(text);
+
+  if (poi) {
+    const btn = document.createElement("button");
+    btn.textContent = "Take this side quest";
+    btn.className = "quest-button";
+    btn.addEventListener("click", () => selectSideQuest(poi));
+    box.appendChild(btn);
+  }
 
   if (image) {
     const credit = document.createElement("a");
@@ -134,7 +142,7 @@ function addLandmark(poi) {
   marker.bindTooltip(escapeHtml(poi.name));
 
   // Click: popup, filled in the first time it opens
-  marker.bindPopup(buildPopup(poi.name, "Loading…", null), { maxWidth: 260 });
+  marker.bindPopup(buildPopup(poi.name, "Loading…", null, null, poi), { maxWidth: 260 });
 
   let loaded = false;
   marker.on("popupopen", async () => {
@@ -152,7 +160,7 @@ function addLandmark(poi) {
     const summary = summaryResult.status === "fulfilled" ? summaryResult.value : "Couldn't load info.";
     const image = imageResult.status === "fulfilled" ? imageResult.value : null;
 
-    marker.setPopupContent(buildPopup(poi.name, summary, image, marker.getPopup()));
+    marker.setPopupContent(buildPopup(poi.name, summary, image, marker.getPopup(), poi));
   });
 }
 
