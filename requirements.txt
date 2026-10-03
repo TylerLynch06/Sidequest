@@ -1,2 +1,5 @@
-requests>=2.31
-pytest>=8
+fastapi
+uvicorn
+openai
+python-dotenv
+requests
