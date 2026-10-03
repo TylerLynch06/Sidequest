@@ -10,17 +10,32 @@ const API = "http://138.251.29.106:8000";
 // Set to "" to search by the bare name.
 const IMAGE_SEARCH_HINT = "Scotland";
 
+const poiCache = new Map();   // "start|end" -> pois array
 const infoCache = new Map();  // poiName -> summary text
 const imageCache = new Map(); // poiName -> { url, page } or null (misses are cached too)
 
 async function getPois(start, end) {
+  const key = `${start.toLowerCase()}|${end.toLowerCase()}`;
+  if (poiCache.has(key)) return poiCache.get(key);
+
   const url =
     `${API}/api/pois?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
 
-  return res.json(); // [{ name, lon, lat }, ...]
+  const pois = await res.json(); // [{ name, lon, lat }, ...]
+  if (pois.length) poiCache.set(key, pois);   // an empty result isn't cached so a retry can succeed
+  return pois;
+}
+
+// Scouting indicator shown while landmarks load
+const scoutToast = document.getElementById("scout-toast");
+
+function setScouting(on, message) {
+  if (!scoutToast) return;
+  if (message) scoutToast.querySelector(".scout-text").textContent = message;
+  scoutToast.classList.toggle("open", on);
 }
 
 async function getPoiInfo(poiName) {
@@ -179,12 +194,22 @@ function addLandmark(poi) {
 // Called from map.js after a route is drawn
 async function showLandmarks(originText, destinationText) {
   landmarkLayer.clearLayers();
+  setScouting(true, "Scouting for landmarks…");
 
   try {
     const pois = await getPois(originText, destinationText);
     pois.forEach(addLandmark);
+    if (pois.length === 0) {
+      setScouting(true, "No landmarks found along this way.");
+      setTimeout(() => setScouting(false), 2500);
+      return;
+    }
   } catch (error) {
     // Landmarks are a bonus, so don't break the route if they fail
     console.error("Could not load landmarks:", error);
+    setScouting(true, "The scouts got lost. Try again.");
+    setTimeout(() => setScouting(false), 3000);
+    return;
   }
+  setScouting(false);
 }

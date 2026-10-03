@@ -348,6 +348,63 @@ main {
     border-radius: 2px;
 }
 
+/* ---------- scouting toast ---------- */
+
+#scout-toast {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    background: var(--parchment);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 6px;
+    box-shadow: 4px 4px 0 rgba(18, 29, 41, 0.55);
+    font: 700 15px var(--body);
+    z-index: 900;
+    white-space: nowrap;
+}
+
+#scout-toast.open {
+    display: flex;
+}
+
+.scout-marks {
+    display: flex;
+    gap: 4px;
+}
+
+/* Three X's are drawn one after another, like a scout marking a chart */
+.scout-marks svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--red);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: draw-x 1.8s ease-in-out infinite;
+}
+
+.scout-marks svg:nth-child(2) { animation-delay: 0.3s; }
+.scout-marks svg:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes draw-x {
+    0%   { stroke-dashoffset: 60; opacity: 0.4; }
+    35%  { stroke-dashoffset: 0;  opacity: 1; }
+    70%  { stroke-dashoffset: 0;  opacity: 1; }
+    100% { stroke-dashoffset: 60; opacity: 0.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scout-marks svg { animation: none; stroke-dashoffset: 0; }
+}
+
 /* ---------- hop-off beacon ---------- */
 
 .hop-off-pulse {

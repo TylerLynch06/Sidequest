@@ -150,9 +150,14 @@ routeButton.addEventListener("click", async function () {
 
   try {
 
+    if (typeof clearSideQuest === "function") clearSideQuest();
+
+    // Landmarks don't depend on the route result, so request both at once.
+    // showLandmarks handles its own errors and loading indicator.
+    const landmarksPromise = showLandmarks(originText, destinationText);
+
     const route = await getRoute(originText, destinationText);
     currentRoute = route;
-    if (typeof clearSideQuest === "function") clearSideQuest();
     drawRoute(route);
 
     console.log(
@@ -161,8 +166,7 @@ routeButton.addEventListener("click", async function () {
       `${route.stops.length} stops (trip ${route.trip_uid})`
     );
 
-    // Get landmarks near the route and plot them (see landmarks.js)
-    showLandmarks(originText, destinationText);
+    await landmarksPromise;
 
   } catch (error) {
 

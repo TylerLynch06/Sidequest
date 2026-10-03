@@ -47,6 +47,16 @@
         <div id="map"></div>
 
 
+        <!-- Shown while landmarks are being fetched (see landmarks.js) -->
+        <div id="scout-toast" role="status" aria-live="polite">
+            <span class="scout-marks" aria-hidden="true">
+                <svg viewBox="0 0 30 30"><path d="M6 5 L24 25 M24 5 L6 25"/></svg>
+                <svg viewBox="0 0 30 30"><path d="M6 5 L24 25 M24 5 L6 25"/></svg>
+                <svg viewBox="0 0 30 30"><path d="M6 5 L24 25 M24 5 L6 25"/></svg>
+            </span>
+            <span class="scout-text">Scouting for landmarks…</span>
+        </div>
+
         <!-- Side quest plan (filled in by js/sidequest.js) -->
         <aside id="quest-panel"></aside>
 
