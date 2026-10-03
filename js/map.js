@@ -7,8 +7,8 @@ const startPosition = [56.34, -2.80];
 const map = L.map("map").setView(startPosition, 10);
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
+  maxZoom: 19,
+  attribution: "&copy; OpenStreetMap contributors"
 }).addTo(map);
 
 
@@ -18,23 +18,23 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 async function geocode(placeName) {
 
-    const url =
-        "https://nominatim.openstreetmap.org/search" +
-        "?format=json" +
-        "&limit=1" +
-        "&q=" + encodeURIComponent(placeName);
+  const url =
+    "https://nominatim.openstreetmap.org/search" +
+    "?format=json" +
+    "&limit=1" +
+    "&q=" + encodeURIComponent(placeName);
 
-    const response = await fetch(url);
-    const results = await response.json();
+  const response = await fetch(url);
+  const results = await response.json();
 
-    if (results.length === 0) {
-        throw new Error("Location not found");
-    }
+  if (results.length === 0) {
+    throw new Error("Location not found");
+  }
 
-    return [
-        parseFloat(results[0].lat),
-        parseFloat(results[0].lon)
-    ];
+  return [
+    parseFloat(results[0].lat),
+    parseFloat(results[0].lon)
+  ];
 }
 
 
@@ -43,55 +43,58 @@ async function geocode(placeName) {
 // -----------------------
 
 document
-    .getElementById("route-button")
-    .addEventListener("click", async function () {
+  .getElementById("route-button")
+  .addEventListener("click", async function () {
 
-        const originText =
-            document.getElementById("origin").value;
+    const originText =
+      document.getElementById("origin").value;
 
-        const destinationText =
-            document.getElementById("destination").value;
+    const destinationText =
+      document.getElementById("destination").value;
 
-        try {
+    try {
 
-            // Find coordinates
-            const origin = await geocode(originText);
-            const destination = await geocode(destinationText);
+      // Find coordinates
+      const origin = await geocode(originText);
+      const destination = await geocode(destinationText);
 
-            // Add markers
-            L.marker(origin)
-                .addTo(map)
-                .bindPopup("Origin");
+      // Add markers
+      L.marker(origin)
+        .addTo(map)
+        .bindPopup("Origin");
 
-            L.marker(destination)
-                .addTo(map)
-                .bindPopup("Destination");
+      L.marker(destination)
+        .addTo(map)
+        .bindPopup("Destination");
 
-            // TODO: ADD JOE's CODE
-            const routePoints = [
-                [56.340, -2.800],
-                [56.345, -2.820],
-                [56.350, -2.835],
-                [56.355, -2.850],
-                [56.360, -2.870],
-                [56.370, -2.890]
-            ];
+      // TODO: ADD JOE's CODE
+      const routePoints = [
+        [56.340, -2.800],
+        [56.345, -2.820],
+        [56.350, -2.835],
+        [56.355, -2.850],
+        [56.360, -2.870],
+        [56.370, -2.890]
+      ];
 
-            const routeLine = L.polyline(routePoints, {
-                color: "#4F917A",
-                weight: 5
-            }).addTo(map);
+      const routeLine = L.polyline(routePoints, {
+        color: "#4F917A",
+        weight: 5
+      }).addTo(map);
 
-            // Fit map around route
-            map.fitBounds(routeLine.getBounds(), {
-                padding: [50, 50]
-            });
+      // Fit map around route
+      map.fitBounds(routeLine.getBounds(), {
+        padding: [50, 50]
+      });
 
-        } catch (error) {
+      // Get landmarks near the route and plot them (see landmarks.js)
+      showLandmarks(originText, destinationText);
 
-            alert("Could not find one of those locations.");
+    } catch (error) {
 
-            console.error(error);
-        }
+      alert("Could not find one of those locations.");
 
-    });
+      console.error(error);
+    }
+
+  });
